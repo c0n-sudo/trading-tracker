@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Umgebungsvariablen (API-Keys etc.)
+.env
+
+# VS Code
+.vscode/
+
+# Datenbank (lokal, gehört nicht ins Repo)
+*.db
