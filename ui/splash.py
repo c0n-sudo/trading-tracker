@@ -21,7 +21,7 @@ class SplashScreen(ctk.CTkFrame):
         self.logo = ctk.CTkLabel(
             self,
             text="PULSE OS",
-            font=("Courier", 48, "bold"),
+            font=("Consolas", 48, "bold"),
             text_color=self.colors["accent2"]
         )
         self.logo.pack(pady=(200, 0))
@@ -29,7 +29,7 @@ class SplashScreen(ctk.CTkFrame):
         self.subtitle = ctk.CTkLabel(
             self,
             text="MARKET TERMINAL v1.0",
-            font=("Courier", 25, "normal"),
+            font=("Consolas", 25, "normal"),
             text_color=self.colors["muted"]
         )
         self.subtitle.pack(pady=(8, 0))
@@ -46,7 +46,7 @@ class SplashScreen(ctk.CTkFrame):
         self.status = ctk.CTkLabel(
             self,
             text="Booting...",
-            font=("Courier", 14),
+            font=("Consolas", 14),
             text_color=self.colors["muted"]
         )
         self.status.pack(pady=(10,0))
