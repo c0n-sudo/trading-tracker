@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from api.coingecko import CoinGeckoAPI
+from api.yfinance_api import YFinance
 
 class Dashboard(ctk.CTkFrame):
     def __init__(self, master):
@@ -17,6 +19,8 @@ class Dashboard(ctk.CTkFrame):
             "sidebar": "#0d0b14",
             "border": "#2a2040"
         }
+        self.cg_api = CoinGeckoAPI()
+        self.yf_api = YFinance()
         self.build_ui()
 
     def build_ui(self):
@@ -49,6 +53,23 @@ class Dashboard(ctk.CTkFrame):
         )
         self.page_title.pack(side="left", padx=16, pady=12)
 
+        self.content = ctk.CTkFrame(
+            self.main,
+            fg_color=self.colors["bg"]
+        )
+        self.content.pack(fill="both", expand=True, padx=16, pady=16)
+
+        self.cards_row = ctk.CTkFrame(
+            self.content,
+            fg_color="transparent"
+        )
+        self.cards_row.pack(fill="x", pady=(0, 8))
+
+        self.add_metric_card(self.cards_row, "BTC", "$70,114", "+2.4%")
+        self.add_metric_card(self.cards_row, "ETH", "$1,984", "+1.1%")
+        self.add_metric_card(self.cards_row, "AAPL", "$306.31", "-1.8%")
+        self.add_metric_card(self.cards_row, "MSFT", "$460.52", "+2.3%")
+
         self.logo_label = ctk.CTkLabel(
             self.sidebar,
             text="PULSE OS",
@@ -73,6 +94,17 @@ class Dashboard(ctk.CTkFrame):
         self.add_nav_item("Favourites")
         self.add_nav_item("Settings")
 
+    def fetch_data(self):
+        crypto = self.cg_api.fetch_price(
+            ["bitcoin", "ethereum"],
+            ["usd"]
+        )
+        stocks = self.yf_api.fetch_stocks(
+            ["AAPL", "MSFT"],
+            ["usd"]
+        )
+        return crypto, stocks
+
     def add_nav_item(self, text, active=False):
         color = self.colors["accent2"] if active else self.colors["muted"]
         btn = ctk.CTkButton(
@@ -87,3 +119,35 @@ class Dashboard(ctk.CTkFrame):
         )
         btn.pack(fill="x", padx=8, pady=2)
         return btn
+
+    def add_metric_card(self, parent, symbol, price, change):
+        card = ctk.CTkFrame(
+            parent,
+            fg_color=self.colors["surface"],
+            corner_radius=8
+        )
+        card.pack(side="left", padx=8, pady=8, ipadx=16, ipady=12)
+
+        ctk.CTkLabel(
+            card,
+            text=symbol,
+            font=("Consolas", 11),
+            text_color=self.colors["muted"]
+        ).pack(anchor="w", padx=12, pady=(10, 0))
+
+        ctk.CTkLabel(
+            card,
+            text=price,
+            font=("Consolas", 20, "bold"),
+            text_color=self.colors["text"]
+        ).pack(anchor="w", padx=12)
+
+        change_color = self.colors["green"] if "+" in change else self.colors["red"]
+        ctk.CTkLabel(
+            card,
+            text=change,
+            font=("Consolas", 11),
+            text_color=change_color
+        ).pack(anchor="w", padx=12, pady=(0, 10))
+
+        return card
