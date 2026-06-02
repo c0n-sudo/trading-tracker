@@ -71,3 +71,5 @@ class SplashScreen(ctk.CTkFrame):
             self.progress.set(progress)
             self.boot_step += 1
             self.after(800, self._run_animation)
+        else:
+            self.master.show_dashboard()
