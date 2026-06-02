@@ -21,6 +21,7 @@ class Dashboard(ctk.CTkFrame):
         }
         self.cg_api = CoinGeckoAPI()
         self.yf_api = YFinance()
+        self.card_labels = {}
         self.build_ui()
 
     def build_ui(self):
@@ -93,6 +94,7 @@ class Dashboard(ctk.CTkFrame):
         self.add_nav_item("Stocks")
         self.add_nav_item("Favourites")
         self.add_nav_item("Settings")
+        self.update_cards()
 
     def fetch_data(self):
         crypto = self.cg_api.fetch_price(
@@ -104,6 +106,29 @@ class Dashboard(ctk.CTkFrame):
             ["usd"]
         )
         return crypto, stocks
+
+    def update_cards(self):
+        crypto, stocks = self.fetch_data()
+
+        if crypto:
+            btc = crypto.get("bitcoin", {})
+            eth = crypto.get("ethereum", {})
+
+            if "BTC" in self.card_labels:
+                price = f"${btc.get('usd', 0):,.2f}"
+                self.card_labels["BTC"]["price"].configure(text=price)
+
+            if "ETH" in self.card_labels:
+                price = f"${eth.get('usd', 0):,.2f}"
+                self.card_labels["ETH"]["price"].configure(text=price)
+
+        if stocks:
+            for symbol in ["AAPL", "MSFT"]:
+                if symbol in self.card_labels and symbol in stocks:
+                    price = f"${stocks[symbol].get('currentPrice', 0):,.2f}"
+                    self.card_labels[symbol]["price"].configure(text=price)
+
+        self.after(60000, self.update_cards)
 
     def add_nav_item(self, text, active=False):
         color = self.colors["accent2"] if active else self.colors["muted"]
@@ -135,19 +160,26 @@ class Dashboard(ctk.CTkFrame):
             text_color=self.colors["muted"]
         ).pack(anchor="w", padx=12, pady=(10, 0))
 
-        ctk.CTkLabel(
+        price_label = ctk.CTkLabel(
             card,
             text=price,
             font=("Consolas", 20, "bold"),
             text_color=self.colors["text"]
-        ).pack(anchor="w", padx=12)
+        )
+        price_label.pack(anchor="w", padx=12)
 
         change_color = self.colors["green"] if "+" in change else self.colors["red"]
-        ctk.CTkLabel(
+        change_label = ctk.CTkLabel(
             card,
             text=change,
             font=("Consolas", 11),
             text_color=change_color
-        ).pack(anchor="w", padx=12, pady=(0, 10))
+        )
+        change_label.pack(anchor="w", padx=12, pady=(0, 10))
+
+        self.card_labels[symbol] = {
+            "price": price_label,
+            "change": change_label
+        }
 
         return card
