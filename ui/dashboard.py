@@ -117,16 +117,28 @@ class Dashboard(ctk.CTkFrame):
             if "BTC" in self.card_labels:
                 price = f"${btc.get('usd', 0):,.2f}"
                 self.card_labels["BTC"]["price"].configure(text=price)
+                change_value = btc.get('usd_24h_change', 0)
+                color = self.colors["green"] if change_value >= 0 else self.colors["red"]
+                change = f"{change_value:.2f}%"
+                self.card_labels["BTC"]["change"].configure(text=change, text_color=color)
 
             if "ETH" in self.card_labels:
                 price = f"${eth.get('usd', 0):,.2f}"
                 self.card_labels["ETH"]["price"].configure(text=price)
+                change_value = eth.get('usd_24h_change', 0)
+                color = self.colors["green"] if change_value >= 0 else self.colors["red"]
+                change = f"{change_value:.2f}%"
+                self.card_labels["ETH"]["change"].configure(text=change, text_color=color)
 
         if stocks:
             for symbol in ["AAPL", "MSFT"]:
                 if symbol in self.card_labels and symbol in stocks:
                     price = f"${stocks[symbol].get('currentPrice', 0):,.2f}"
                     self.card_labels[symbol]["price"].configure(text=price)
+                    change_value = stocks[symbol].get('regularMarketChangePercent', 0)
+                    color = self.colors["green"] if change_value >= 0 else self.colors["red"]
+                    change = f"{change_value:.2f}%"
+                    self.card_labels[symbol]["change"].configure(text=change, text_color=color)
 
         self.after(60000, self.update_cards)
 
