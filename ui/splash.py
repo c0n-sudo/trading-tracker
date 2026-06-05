@@ -1,4 +1,7 @@
 import customtkinter as ctk 
+from api.coingecko import CoinGeckoAPI
+from api.yfinance_api import YFinance
+import threading
 
 class SplashScreen(ctk.CTkFrame):
     def __init__(self, master):
@@ -73,3 +76,26 @@ class SplashScreen(ctk.CTkFrame):
             self.after(800, self._run_animation)
         else:
             self.master.show_dashboard()
+
+    def check_apis(self):
+        self.cg_api = CoinGeckoAPI()
+        self.yf_api = YFinance()
+
+        self.cg_api.fetch_price(
+            ["bitcoin", "ethereum"],
+            ["usd"]
+        )
+        self.yf_api.fetch_stocks(
+            ["AAPL", "MSFT"],
+            ["usd"]
+        )
+
+        crypto = self.cg_api.fetch_price(
+            ["bitcoin", "ethereum"],
+            ["usd"]
+        )
+
+        stocks = self.yf_api.fetch_stocks(
+            ["AAPL", "MSFT"],
+            ["usd"]
+        )

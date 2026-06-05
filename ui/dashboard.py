@@ -5,6 +5,7 @@ from api.yfinance_api import YFinance
 class Dashboard(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        
         self.configure(fg_color="#13111c")
         self.pack(fill="both", expand=True)
         self.colors = {
@@ -19,6 +20,7 @@ class Dashboard(ctk.CTkFrame):
             "sidebar": "#0d0b14",
             "border": "#2a2040"
         }
+
         self.cg_api = CoinGeckoAPI()
         self.yf_api = YFinance()
         self.card_labels = {}
